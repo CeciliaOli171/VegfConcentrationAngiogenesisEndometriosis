@@ -81,8 +81,11 @@ bool DaughterCellModifier<DIM>::IsBranchingSegmentNextToCell(AbstractCellPopulat
         c_vector<double, DIM> x_parent_neighbourcells = rCellPopulation.rGetMesh().GetVectorFromAtoB(x_parent_cell, x_neighbour_cell);
         double d_parent_neighbourcells = norm_2(x_parent_neighbourcells);
 
-        if(d_parent_neighbourcells < mThresholdLength){
-            if (pNeighbourCell->GetMutationState()->IsType<BranchingSegmentMutationState>()){
+        // check that the branches have different branching segments
+        // if the branching segments are similar then check the thresholdlength
+        
+        if (pNeighbourCell->GetMutationState()->IsType<BranchingSegmentMutationState>() && pParentCell->GetCellData()->GetItem("BranchingSegment") == *i){
+            if(d_parent_neighbourcells < mThresholdLength){
                 return true;
             } 
         }
@@ -117,15 +120,15 @@ std::pair<c_vector<double, DIM>, unsigned> DaughterCellModifier<DIM>::ClosestNei
         // check if it is a branching point or in the same branch 
         if(pNeighbourCellk->GetCellData()->GetItem("BranchNumber") == pCell->GetCellData()->GetItem("BranchNumber")){
             if(length_u < length_closest_neighbour){
-            length_closest_neighbour = length_u;
-            x_closest_neighbour = xk;
-            indice_closest_neighbour = *k;
+                length_closest_neighbour = length_u;
+                x_closest_neighbour = xk;
+                indice_closest_neighbour = *k;
             }
         } else if(pNeighbourCellk->GetMutationState()->IsType<BranchingSegmentMutationState>() && pCell->GetCellData()->GetItem("BranchingSegment") == *k){
             if(length_u < length_closest_neighbour){
-            length_closest_neighbour = length_u;
-            x_closest_neighbour = xk;
-            indice_closest_neighbour = *k;
+                length_closest_neighbour = length_u;
+                x_closest_neighbour = xk;
+                indice_closest_neighbour = *k;
             }
         }
     }
@@ -160,7 +163,8 @@ void DaughterCellModifier<DIM>::CalculateAnastomosisVector( AbstractCellPopulati
         CellPtr pClosestNeighbour = rCellPopulation.GetCellUsingLocationIndex(closest_indice);
         c_vector<double, DIM> x_closest_neighbour = rCellPopulation.GetLocationOfCellCentre(pClosestNeighbour);
 
-        // we need to check if the neighbour cell is a vessel segment or a tip cell 
+        // we need to check if the neighbour cell is a vessel segment or a vessel tip
+        // we also need to check that the cells are not from the same branching segment
         if (pClosestNeighbour->GetMutationState()->IsType<VesselTipMutationState>() && !(IsBranchingSegmentNextToCell(rCellPopulation, p_node_population, pParentCell))){
             // if it is a tip cell, then they merge and become two vessel segment 
             MAKE_PTR(VesselSegmentMutationState, p_vessel_state);
@@ -178,7 +182,6 @@ void DaughterCellModifier<DIM>::CalculateAnastomosisVector( AbstractCellPopulati
 
             pParentCell->GetCellData()->SetItem("Anastomosis", 1);
             pClosestNeighbour->GetCellData()->SetItem("Anastomosis", 1);
-
         } else if (pClosestNeighbour->GetMutationState()->IsType<VesselSegmentMutationState>() && !(IsBranchingSegmentNextToCell(rCellPopulation, p_node_population, pParentCell))){
             // if it is a vessel segment, the parent cell becomes a vessel segment and the neighbour cell becomes a branching cell 
             MAKE_PTR(VesselSegmentMutationState, p_vessel_state);
@@ -226,6 +229,7 @@ void DaughterCellModifier<DIM>::CalculateAnastomosisVector( AbstractCellPopulati
         double tortuosity_neighbour = pClosestNeighbour->GetCellData()->GetItem("TortuosityParent");
         double tortuosity_parent = tortuosity_neighbour + norm_2(x_parent-x_closest_neighbour);
         pParentCell->GetCellData()->SetItem("TortuosityParent", tortuosity_parent);
+        pParentCell->GetCellData()->SetItem("AnastomosisConnectivity", closest_indice);
 
         // TRACE("ANASTOMOSIS");
     } 
@@ -260,7 +264,9 @@ void DaughterCellModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCel
         cell_iter->GetCellData()->SetItem("TortuosityDaughter", tortuosity);
         cell_iter->GetCellData()->SetItem("LoopNumber", 0.0);
         cell_iter->GetCellData()->SetItem("Anastomosis", 0); // 0 if no anastomosis, 1 if anastomosis between two tip cells, 2 if anastomosis between tip cell and stalk cell/branching cell 
-    }
+        cell_iter->GetCellData()->SetItem("AnastomosisConnectivity", 0);
+    } 
+    // store in cell cycle model (create subclass) and add the cell data -> more efficient
 
     UpdateCellData(rCellPopulation);
 }
@@ -333,6 +339,7 @@ void DaughterCellModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
                 pDaughterCell->SetCellProliferativeType(p_vessel_type);
                 pDaughterCell->InitialiseCellCycleModel();
                 pDaughterCell->GetCellData()->SetItem("BranchingPoint", 0);
+                pParentCell->GetCellData()->SetItem("Connectivity", node_index);
             }
             pDaughterCell->GetCellData()->SetItem("node_index", node_index);
             pDaughterCell->GetCellData()->SetItem("OriginalParent", node_index_data);

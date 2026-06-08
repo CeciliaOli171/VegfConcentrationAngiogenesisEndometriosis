@@ -130,21 +130,24 @@ GraphFurthestCell = False
 GraphTimeReachingFurthestCell = False
 GraphTimeNormFirstVesselTip = False
 
-GraphNbCellsPlane = False # boxplots
+GraphNbCellsPlaneBoxPlots = False 
 GraphCellDensityInsideLesion = False
 GraphDensityCellInsideLesionComparedToTotalCells = False
 GraphDensityCellInsideLesionComparedToTotalCellsBoxPlots = False
 GraphBarCellsInPlane = False
 GraphErrorNbCellsPlanePositionLesion = False
 
-GraphConvergenceTime = False
 GraphFirstTimeCellReachingCentreLesion = False
 GraphFirstTimeCellReachingLesion = False
 GraphFirstTimeCellReachingLesionBoxPlot = False
 GraphErrorFirstTimeCellReachingLesionPositionLesion = False
-GraphErrorFirstTimeCellReachingLesionPositionLesionBoxPlots = True
+GraphErrorFirstTimeCellReachingLesionPositionLesionBoxPlots = False
 GraphVascularisation = False
 
+GraphConvergenceTime = False
+GraphConvergenceTimeReachingLesion = True
+GraphConvergenceNbBranches = True
+GraphConvergenceCellDensityInsideLesion = True
 
 ## Functions 
 def Psprout(x, c_max, Kc, GlobalOrLocal):
@@ -391,6 +394,103 @@ if GraphConvergenceTime:
     plt.legend()
     plt.show()
 
+if GraphConvergenceTimeReachingLesion:
+    # plot 
+    fig, ax = plt.subplots(figsize = (12,8), dpi = 300, layout='constrained')
+
+    cmax = 6
+    randomseed = [i+1 for i in range(50)]
+    randomseednumber = [i+110 for i in range(50)]
+
+    timefirstreachinglesion_analyticalapproxpde = []
+    for j in randomseednumber:
+        file_path_analyticalapproxpde = main_file_path + "CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(j) + "Source" + str(6)
+
+        file_cellmutation_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.vizmutationstates"
+        file_nodescoordinates_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.viznodes"
+
+        timefirstreachinglesion_analyticalapproxpde.append(runner.TimeFirstReachingPlane(file_nodescoordinates_analyticalapproxpde, ref_point, dim))
+
+    data = []
+    for j in range(50):
+        data.append([timefirstreachinglesion_analyticalapproxpde[i] for i in range(j)])
+
+    box_width = 0.5
+    group_gap = 1
+    pos_analyticalapproxpde = [i for i in randomseed]
+    bp_B = ax.boxplot(data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color='xkcd:green', linewidth=2, ls="--"), whis=np.inf)
+ 
+    ax.set_xlabel('Random Seed Number', fontsize = 30)
+    ax.set_ylabel('Time For Network to Reach Lesion', fontsize = 26)
+    ax.set_xticks(randomseed)
+    ax.set_yticks([1600, 1700, 1800, 1900, 2000])
+    ax.set_ylim(1600, 2015)
+    ax.tick_params(axis = 'both', labelsize = 24)
+    plt.savefig(main_file_path + "Figures/ConvergenceTimeFirstCellReachingLesion" + str(cmax) + ".png")
+
+if GraphConvergenceNbBranches:
+    # plot 
+    fig, ax = plt.subplots(figsize = (12,8), dpi = 300, layout='constrained')
+
+    cmax = 6
+    randomseed = [i for i in range(50)]
+    randomseednumber = [i+110 for i in range(50)]
+
+    totalnumberbranches_analyticalapproxpde = []
+    for j in randomseednumber:
+        file_path_analyticalapproxpde = main_file_path + "CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(j) + "Source" + str(6)
+
+        file_branchesnumber_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.vizbranchnumber"
+        file_anastomosis_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.vizanastomosis"
+
+        totalnumberbranches_analyticalapproxpde.append(runner.TotalNumberBranches(file_branchesnumber_analyticalapproxpde, file_anastomosis_analyticalapproxpde))
+
+    data = []
+    for j in range(50):
+        data.append([totalnumberbranches_analyticalapproxpde[i] for i in range(j)])
+
+    box_width = 0.5
+    group_gap = 1
+    pos_analyticalapproxpde = [i for i in randomseed]
+    bp_B = ax.boxplot(data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color='xkcd:green', linewidth=2, ls="--"), whis=np.inf)
+ 
+    ax.set_xlabel('Random Seed Number', fontsize = 30)
+    ax.set_ylabel('Number of Branches', fontsize = 26)
+    ax.set_xticks(randomseed)
+    ax.tick_params(axis = 'both', labelsize = 24)
+    plt.savefig(main_file_path + "Figures/ConvergenceNbBranches" + str(cmax) + ".png")
+
+if GraphConvergenceCellDensityInsideLesion:
+    # plot 
+    fig, ax = plt.subplots(figsize = (12,8), dpi = 300, layout='constrained')
+
+    cmax = 6
+    randomseed = [i for i in range(50)]
+    randomseednumber = [i+110 for i in range(50)]
+
+    celldensitytotal_analyticalapproxpde = []
+    for j in randomseednumber:
+        file_path_analyticalapproxpde = main_file_path + "CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(j) + "Source" + str(6)
+
+        file_cellmutation_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.vizmutationstates"
+        file_nodescoordinates_analyticalapproxpde = file_path_analyticalapproxpde + "/results_from_time_0/results.viznodes"
+
+        celldensitytotal_analyticalapproxpde.append(100*runner.NbCellsAfterPlane(file_nodescoordinates_analyticalapproxpde, ref_point, dim)/runner.TotalNumberCells(file_cellmutation_analyticalapproxpde))
+
+    data = []
+    for j in range(50):
+        data.append([celldensitytotal_analyticalapproxpde[i] for i in range(j)])
+
+    box_width = 0.5
+    group_gap = 1
+    pos_analyticalapproxpde = [i for i in randomseed]
+    bp_B = ax.boxplot(data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color='xkcd:green', linewidth=2, ls="--"), whis=np.inf)
+ 
+    ax.set_xlabel('Random Seed Number', fontsize = 30)
+    ax.set_ylabel("Networks' Cells Inside Lesion (%)", fontsize = 26)
+    ax.set_xticks(randomseed)
+    ax.tick_params(axis = 'both', labelsize = 24)
+    plt.savefig(main_file_path + "Figures/ConvergenceCellDensityInsideLesion" + str(cmax) + ".png")
 
 # Number of branches depending on source term 
 if GraphNbBranches:
@@ -501,9 +601,9 @@ if GraphNbBranchesBoxPlots:
     # ax.plot(pos_constant, totalnumberbranches_constant_average, ls='--', label = 'ECM Hypothesis', color='#008080')
     # ax.plot(pos_analyticalapproxpde, totalnumberbranches_analyticalapproxpde_average, label = 'Lesion Hypothesis', ls='--', color='#C00000')
 
-    bp_A = ax.boxplot(totalnumberbranches_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_constant, linewidth=2, ls="--"))
+    bp_A = ax.boxplot(totalnumberbranches_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_constant, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_A, color_constant)
-    bp_B = ax.boxplot(totalnumberbranches_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"))
+    bp_B = ax.boxplot(totalnumberbranches_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_B, color_analyticalapproxpde)
 
     df = pd.DataFrame({'position':position_total, 'totalnumberbranches':totalnumberbranches_total,'vegfhyp':vegfhyp_total})
@@ -1242,7 +1342,7 @@ if GraphExpectedNbBranchesVEGF:
 
 
 # Number of cells after a certain plane depending on source term for different Psprout 
-if GraphNbCellsPlane:
+if GraphNbCellsPlaneBoxPlots:
     # plot 
     fig, ax = plt.subplots(figsize = (12,8), dpi = 300, layout='constrained')
 
@@ -1303,9 +1403,9 @@ if GraphNbCellsPlane:
     # ax.plot(pos_constant, cellsafterplane_constant_average, ls='--', label = 'ECM Hypothesis', color='#008080')
     # ax.plot(pos_analyticalapproxpde, cellsafterplane_analyticalapproxpde_average, label = 'Lesion Hypothesis', ls='--', color='#C00000')
 
-    bp_A = ax.boxplot(cellsafterplane_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_constant, linewidth=2, ls="--"))
+    bp_A = ax.boxplot(cellsafterplane_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_constant, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_A, color_constant)
-    bp_B = ax.boxplot(cellsafterplane_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"))
+    bp_B = ax.boxplot(cellsafterplane_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, manage_ticks=False, showfliers=False, meanline = True, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_B, color_analyticalapproxpde)
 
     df = pd.DataFrame({'position':position_total, 'cellsafterplane':cellsafterplane_total,'vegfhyp':vegfhyp_total})
@@ -1483,9 +1583,9 @@ if GraphDensityCellInsideLesionComparedToTotalCellsBoxPlots:
     # ax.plot(pos_constant, celldensitytotal_constant_average, ls = '--', label = 'ECM Hypothesis', color='#008080')
     # ax.plot(pos_analyticalapproxpde, celldensitytotal_analyticalapproxpde_average, ls = '--', label = 'Lesion Hypothesis', color='#C00000')
 
-    bp_A = ax.boxplot(celldensitytotal_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, meanline=True, manage_ticks=False, showfliers=False, meanprops=dict(color=color_constant, linewidth=2, ls="--"))
+    bp_A = ax.boxplot(celldensitytotal_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=True, meanline=True, manage_ticks=False, showfliers=False, meanprops=dict(color=color_constant, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_A, color_constant)
-    bp_B = ax.boxplot(celldensitytotal_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, meanline = True, manage_ticks=False, showfliers=False, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"))
+    bp_B = ax.boxplot(celldensitytotal_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=True, meanline = True, manage_ticks=False, showfliers=False, meanprops=dict(color=color_analyticalapproxpde, linewidth=2, ls="--"), whis=np.inf)
     runner.style_boxplot(bp_B, color_analyticalapproxpde)
 
     df = pd.DataFrame({'position':position_total, 'celldensitytotal':celldensitytotal_total,'vegfhyp':vegfhyp_total})
@@ -1804,9 +1904,9 @@ if GraphFirstTimeCellReachingLesionBoxPlot:
     # ax.plot(pos_constant, timefirstreachinglesion_constant_average, marker = '.', markersize = 6, label = 'ECM Hypothesis', color='#008080')
     # ax.plot(pos_analyticalapproxpde, timefirstreachinglesion_analyticalapproxpde_average, label = 'Lesion Hypothesis', marker = '.', markersize = 6, color='#C00000')
 
-    bp_A = ax.boxplot(timefirstreachinglesion_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False)
+    bp_A = ax.boxplot(timefirstreachinglesion_constant_data, positions=pos_constant, widths=box_width, vert=True, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False, whis=np.inf)
     runner.style_boxplot(bp_A, color_constant)
-    bp_B = ax.boxplot(timefirstreachinglesion_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False)
+    bp_B = ax.boxplot(timefirstreachinglesion_analyticalapproxpde_data, positions=pos_analyticalapproxpde, widths=box_width, vert=True, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False, whis=np.inf)
     runner.style_boxplot(bp_B, color_analyticalapproxpde)
 
     df = pd.DataFrame({'position':position_total, 'timefirstreachinglesion':timefirstreachinglesion_total,'vegfhyp':vegfhyp_total})
@@ -2102,9 +2202,9 @@ if GraphErrorFirstTimeCellReachingLesionPositionLesionBoxPlots:
     position_analyticalapproxpde = [item + width/2 for item in DistanceLesionVesselTicks]
 
     box_colors = ['#C00000', '#008080']
-    bp_analyticalapproxpde = ax.boxplot(timereachinglesion_analyticalapproxpde, positions = position_analyticalapproxpde, widths=width, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False) 
+    bp_analyticalapproxpde = ax.boxplot(timereachinglesion_analyticalapproxpde, positions = position_analyticalapproxpde, widths=width, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False, whis=np.inf) 
     runner.style_boxplot(bp_analyticalapproxpde, color_analyticalapproxpde)
-    bp_constant = ax.boxplot(timereachinglesion_constant, positions = position_constant, widths=width, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False) 
+    bp_constant = ax.boxplot(timereachinglesion_constant, positions = position_constant, widths=width, patch_artist=True, showmeans=False, manage_ticks=False, showfliers=False, whis=np.inf) 
     runner.style_boxplot(bp_constant, color_constant)
 
     ax.set_xlabel('Distance Lesion / Vessel', fontsize = 26)
@@ -2146,8 +2246,8 @@ if GraphVascularisation:
                 time_constant.append(timeseed_constant)
                 vascularisationvalue_constant += 1
 
-        vascularisation_analyticalapproxpde.append(vascularisationvalue_analyticalapproxpde)
-        vascularisation_constant.append(vascularisationvalue_constant)
+        vascularisation_analyticalapproxpde.append(vascularisationvalue_analyticalapproxpde*5)
+        vascularisation_constant.append(vascularisationvalue_constant*5)
 
     SourceTermTicks = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     barWidth = 0.025
@@ -2158,9 +2258,9 @@ if GraphVascularisation:
     bp_constant = ax.bar(position_constant, vascularisation_constant, width=barWidth, color = '#008080', label = 'ECM Hypothesis') 
    
     ax.set_xlabel(r'$c_{max}$', fontsize = 26)
-    ax.set_ylabel('Number of Realisations with \n Lesion Vascularised', fontsize = 26)
+    ax.set_ylabel('Realisations with Lesion Vascularised \n (%)', fontsize = 26)
     ax.legend(loc='lower left', fontsize = 24)
     ax.set_xticks(SourceTermTicks)
-    ax.set_yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+    ax.set_yticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     ax.tick_params(axis = 'both', labelsize = 24)
     plt.savefig(main_file_path + "Figures/VascularisationBarPlot" + str(ref_point) + ".png")

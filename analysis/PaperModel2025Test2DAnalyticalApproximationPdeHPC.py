@@ -11,14 +11,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-valuerandomseed")
 parser.add_argument("-sourceterm")
 args = parser.parse_args()
-path_executable_analyticalapproximationpde = "Chaste/Build/projects/AngiogenesisModel/test/TestAngiogenesisModelWithVegfConcentrationAnalyticalApproximationOfPde"
+path_executable_analyticalapproximationpde = "Chaste/Build/projects/VegfConcentrationAngiogenesisEndometriosis/test/TestAnalyticalApproxPdeVegfConcentrationAngiogenesisEndometriosis"
 
 
 input_list_analyticalapproximationvegf = []
-# list_random_seed = [11, 22, 33, 44, 55, 66, 77, 88, 99, 110]
+list_random_seed = [i+200 for i in range(40)]
+list_source_term = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+
+#list_random_seed = [11, 22, 33, 44, 55, 66, 77, 88, 99, 110]
 # list_source_term = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-list_random_seed = [i+111 for i in range(50)]
-list_source_term = [0.6]
+# list_source_term = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
 
 
 # Analytical Approx Pde: hill function

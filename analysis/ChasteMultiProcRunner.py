@@ -16,7 +16,7 @@ class ChasteMultiProcRunner:
     """A class to deal with running several instances of chaste at once"""
     def __init__(self,  
                 f_executable,
-                num_processors = 32,
+                num_processors = 256,
                 verbose = False):
         self.f_executable = f_executable
         self.n_procs = num_processors

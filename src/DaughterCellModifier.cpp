@@ -222,7 +222,7 @@ void DaughterCellModifier<DIM>::CalculateAnastomosisVector( AbstractCellPopulati
             pParentCell->GetCellData()->SetItem("Anastomosis", 2);
         }
 
-        // search for the cells with the same branch number as the parent or neihbour cells 
+        // search for the cells with the same branch number as the parent or neighbour cells 
         // if anastomosis between tip/tip cells or tip/branching cells then the those cells are in the same loop
         // if anastomosis between tip/vessel segment then look for their coordinates and check that they have a smaller norm? 
 

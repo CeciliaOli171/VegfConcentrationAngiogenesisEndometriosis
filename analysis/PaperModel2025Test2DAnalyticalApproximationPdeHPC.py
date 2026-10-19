@@ -15,13 +15,11 @@ path_executable_analyticalapproximationpde = "Chaste/Build/projects/VegfConcentr
 
 
 input_list_analyticalapproximationvegf = []
-list_random_seed = [i+200 for i in range(40)]
-list_source_term = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+# list_random_seed = [i+200 for i in range(40)]
+# list_source_term = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
 
-#list_random_seed = [11, 22, 33, 44, 55, 66, 77, 88, 99, 110]
-# list_source_term = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-# list_source_term = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
-
+list_random_seed = [220, 221, 235]
+list_source_term = [1.9]
 
 # Analytical Approx Pde: hill function
 for random_seed in list_random_seed:
@@ -29,6 +27,61 @@ for random_seed in list_random_seed:
         RandomSeedNb = int(random_seed)
         SourceTermNb = int(float(source_term)*10)
         input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
+
+list_random_seed_2 = [227, 233]
+list_source_term_2 = [1.7]
+
+# Analytical Approx Pde: hill function
+for random_seed in list_random_seed_2:
+    for source_term in list_source_term_2:
+        RandomSeedNb = int(random_seed)
+        SourceTermNb = int(float(source_term)*10)
+        input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
+
+list_random_seed_3 = [232]
+list_source_term_3 = [1.8]
+
+# Analytical Approx Pde: hill function
+for random_seed in list_random_seed_3:
+    for source_term in list_source_term_3:
+        RandomSeedNb = int(random_seed)
+        SourceTermNb = int(float(source_term)*10)
+        input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
+
+list_random_seed_4 = [229]
+list_source_term_4 = [1.5, 1.9]
+
+# Analytical Approx Pde: hill function
+for random_seed in list_random_seed_4:
+    for source_term in list_source_term_4:
+        RandomSeedNb = int(random_seed)
+        SourceTermNb = int(float(source_term)*10)
+        input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
+
+list_random_seed_5 = [236]
+list_source_term_5 = [1.4, 1.8]
+
+# Analytical Approx Pde: hill function
+for random_seed in list_random_seed_5:
+    for source_term in list_source_term_5:
+        RandomSeedNb = int(random_seed)
+        SourceTermNb = int(float(source_term)*10)
+        input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
+list_random_seed_6 = [238]
+list_source_term_6 = [1.3, 2.0]
+
+# Analytical Approx Pde: hill function
+for random_seed in list_random_seed_6:
+    for source_term in list_source_term_6:
+        RandomSeedNb = int(random_seed)
+        SourceTermNb = int(float(source_term)*10)
+        input_list_analyticalapproximationvegf.append({"vegfdudtcoeff": 0.1, "vegfdiffusioncoeff": 0.44e4, "vegfdecaycoeff" : 1.0, "vegfcreationcoeff": 0.0, "vegfconsumptioncoeff": 1.0, "vegfinitialvalue": 0.1, "vegfboundaryvalue": source_term, "vegfconstantbackground": 0.1, "S": 1e-5, "sigma": 1e-1, "chi": 1e-4, "omegap": 1e-1, "omegaa": 1e-5, "maxsproutingrate": 0.08, "cmax": 0.8, "cmin": 0.3, "pmax": 0.98, "pmin": 0.5, "anastomosislength": 1.5, "thresholdlength": 5.0, "time": 2000, "seed": random_seed, "output_directory": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DPde/CoupledModel2DPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_analyticalapproxvegf": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DAnalyticalApproxPde/CoupledModel2DAnalyticalApproxPdeSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb), "output_directory_vegfconstant": "PaperAngiogenesisModel2025/PaperModel2025Analysis2D/CoupledModel2DConstant/CoupledModel2DConstantSeed" + str(RandomSeedNb) + "Source" + str(SourceTermNb)})
+
 
 
 runner_analyticalapproximationpde = ChasteMultiProcRunner(f_executable=path_executable_analyticalapproximationpde)

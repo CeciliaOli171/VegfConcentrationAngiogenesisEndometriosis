@@ -5,6 +5,7 @@
 
 import numpy as np
 import statistics as stats
+import re
 
 from scipy.spatial import ConvexHull
 
@@ -438,6 +439,56 @@ class ParametersSensitivityRunner:
 
         return list_anastomosis_final
 
+    def Anastomosis1PerTimeStep(file_anastomosis):
+        # for each time step we want: number of tip cells, number of anastomosis events 
+        # we open the file
+        f_anastomosis = open(file_anastomosis, 'r')
+
+        list_anastomosis = []
+
+        for line_anastomosis in f_anastomosis:
+            list_lineanastomosis = [float(x) for x in line_anastomosis.split()[1:]]       
+            anastomosispertime = 0
+            
+            for elem in list_lineanastomosis:
+                if(elem == 2):
+                    anastomosispertime += 1
+            
+            list_anastomosis.append(anastomosispertime)
+        f_anastomosis.close()
+
+        list_anastomosis_final = np.zeros(len(list_anastomosis))
+
+        for k in range(1, len(list_anastomosis)):
+            list_anastomosis_final[k-1] = list_anastomosis[k]-list_anastomosis[k-1]
+
+        return list_anastomosis_final
+
+    def Anastomosis2PerTimeStep(file_anastomosis):
+        # for each time step we want: number of tip cells, number of anastomosis events 
+        # we open the file
+        f_anastomosis = open(file_anastomosis, 'r')
+
+        list_anastomosis = []
+
+        for line_anastomosis in f_anastomosis:
+            list_lineanastomosis = [float(x) for x in line_anastomosis.split()[1:]]       
+            anastomosispertime = 0
+            
+            for elem in list_lineanastomosis:
+                if(elem == 1):
+                    anastomosispertime += 1
+            
+            list_anastomosis.append(anastomosispertime/2)
+        f_anastomosis.close()
+
+        list_anastomosis_final = np.zeros(len(list_anastomosis))
+
+        for k in range(1, len(list_anastomosis)):
+            list_anastomosis_final[k-1] = list_anastomosis[k]-list_anastomosis[k-1]
+
+        return list_anastomosis_final
+
     def TotalAnastomosisEvents(file_anastomosis):
         totalanastomosis = 0
 
@@ -577,7 +628,7 @@ class ParametersSensitivityRunner:
 
                     return TimeFirstReachingPlane
         
-        TimeFirstReachingPlane = t
+        TimeFirstReachingPlane = 2000 # CAREFUL
         f.close()
         return TimeFirstReachingPlane
     
@@ -1162,6 +1213,58 @@ class ParametersSensitivityRunner:
         
         return list_normfirsttipcell
 
+    # from Claude 
+    def ray_hits_box(p, d, bmin, bmax):
+        """p: ray origin, d: direction, bmin/bmax: box corners (each length 2 or 3)."""
+        p, d = np.asarray(p, float), np.asarray(d, float)
+        bmin, bmax = np.asarray(bmin, float), np.asarray(bmax, float)
+
+        with np.errstate(divide="ignore", invalid="ignore"):
+            inv_d = 1.0 / d                      # zero components become +/-inf
+            t1 = (bmin - p) * inv_d
+            t2 = (bmax - p) * inv_d
+
+        t_near = np.nanmax(np.minimum(t1, t2))   # latest entry across axes
+        t_far = np.nanmin(np.maximum(t1, t2))    # earliest exit across axes
+
+        return t_far >= max(t_near, 0.0)
+
+    def NormFirstVesselTipTowardLesion(file_nodescoordinates, file_cellmutation, ref_point, box_min, box_max, dim):
+        array_nodescoordinates = ParametersSensitivityRunner.NodesCoordinates(file_nodescoordinates, dim)
+
+        # initialisation
+        list_normfirsttipcelltowardlesion = []
+
+        # origin node 
+        origin = np.asarray(array_nodescoordinates[0][:dim], float)
+        ref_point = np.asarray(ref_point[:dim], float)
+
+        # max vector
+        box_max = np.asarray(box_max, float)
+
+        # min vector
+        box_min = np.asarray(box_min, float)
+
+        with open(file_nodescoordinates, 'r') as f:
+            for line in f:
+                t = float(line.split()[0])
+                list_nbcellsinplaneattimestept = [float(x) for x in line.split()[1:]]
+
+                NormFurthestCell = 0
+                for node in list_nbcellsinplaneattimestept:
+                    direction = node - origin 
+                    if not np.any(direction):
+                        continue
+                    if not ParametersSensitivityRunner.ray_hits_box(origin, direction, box_min, box_max):
+                        continue 
+                    norm = np.linalg.norm(node - ref_point)
+                    if norm > NormFurthestCell:
+                        NormFurthestCell = norm
+                
+                list_normfirsttipcelltowardlesion.append(NormFurthestCell)
+        
+        return list_normfirsttipcelltowardlesion
+
     # function returning the average area of the blood vessel tree 
     def AverageArea(file_nodescoordinates, file_cellmutation):
         # Method with the half sphere formula
@@ -1233,3 +1336,12 @@ class ParametersSensitivityRunner:
         # Fliers (outliers)
         for flier in bp["fliers"]:
             flier.set(marker="o", markerfacecolor="none", markeredgecolor=edge_color, alpha=0.9)
+
+    def parse(s):
+        if isinstance(s, (list, tuple, np.ndarray)):
+            return np.asarray(s, dtype=float)
+        s = re.sub(r"np\.float\d*\(([^)]*)\)", r"\1", str(s))
+        return np.array([float(x) for x in re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?|nan|inf", s)])
+
+    def mean_velocity(s):
+        return np.mean(np.diff(ParametersSensitivityRunner.parse(s)))
